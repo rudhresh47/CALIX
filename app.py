@@ -4,8 +4,20 @@ import torch
 from transformers import AutoImageProcessor, AutoModelForImageClassification
 import pandas as pd
 
-# === CONFIG ===
-st.set_page_config(page_title="CALIX", layout="wide")
+st.set_page_config(
+    page_title="CALIX",
+    page_icon="apple",
+    layout="centered",
+    initial_sidebar_state="collapsed"
+)
+
+# === MAKE IT A PHONE APP ===
+st.markdown("""
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="CALIX">
+<link rel="manifest" href="/manifest.json">
+""", unsafe_allow_html=True)
 
 # === DARK THEME ===
 st.markdown("""
