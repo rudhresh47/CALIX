@@ -10,7 +10,6 @@ st.set_page_config(
     layout="centered",
     initial_sidebar_state="collapsed"
 )
-
 # === MAKE IT A PHONE APP ===
 st.markdown("""
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -59,7 +58,7 @@ def nav_bar():
 
 page = st.query_params.get("page", "home")
 
-# === BETTER MODEL: eslamxm/vit-base-food101 (Fine-tuned Food-101 + 88% Accuracy) ===
+# === AI MODEL ===
 @st.cache_resource(show_spinner="Loading AI...")
 def load_model():
     processor = AutoImageProcessor.from_pretrained("eslamxm/vit-base-food101")
@@ -69,7 +68,7 @@ def load_model():
 processor, model = load_model()
 food_names = [model.config.id2label[i].replace("_", " ").title() for i in range(len(model.config.id2label))]
 
-# === LOCAL NUTRITION ===
+# === FULL 101-FOOD NUTRITION DATABASE ===
 nutrition_db = {
     "Pizza": {"cal": 285, "carb": "36g", "prot": "12g", "fat": "10g"},
     "Biryani": {"cal": 320, "carb": "45g", "prot": "15g", "fat": "12g"},
@@ -80,6 +79,101 @@ nutrition_db = {
     "Burger": {"cal": 500, "carb": "45g", "prot": "25g", "fat": "28g"},
     "Pancakes": {"cal": 220, "carb": "32g", "prot": "6g", "fat": "8g"},
     "Chicken Curry": {"cal": 320, "carb": "15g", "prot": "25g", "fat": "18g"},
+    "Apple Pie": {"cal": 296, "carb": "42g", "prot": "2g", "fat": "14g"},
+    "Baby Back Ribs": {"cal": 350, "carb": "10g", "prot": "25g", "fat": "28g"},
+    "Baklava": {"cal": 420, "carb": "50g", "prot": "6g", "fat": "25g"},
+    "Beef Carpaccio": {"cal": 180, "carb": "2g", "prot": "25g", "fat": "8g"},
+    "Beef Tartare": {"cal": 200, "carb": "1g", "prot": "22g", "fat": "12g"},
+    "Beet Salad": {"cal": 120, "carb": "18g", "prot": "3g", "fat": "6g"},
+    "Beignets": {"cal": 350, "carb": "45g", "prot": "5g", "fat": "18g"},
+    "Bibimbap": {"cal": 450, "carb": "60g", "prot": "18g", "fat": "15g"},
+    "Bread Pudding": {"cal": 300, "carb": "40g", "prot": "6g", "fat": "12g"},
+    "Breakfast Burrito": {"cal": 550, "carb": "50g", "prot": "25g", "fat": "30g"},
+    "Bruschetta": {"cal": 180, "carb": "25g", "prot": "5g", "fat": "8g"},
+    "Caesar Salad": {"cal": 350, "carb": "15g", "prot": "12g", "fat": "28g"},
+    "Cannoli": {"cal": 380, "carb": "45g", "prot": "8g", "fat": "20g"},
+    "Caprese Salad": {"cal": 220, "carb": "10g", "prot": "12g", "fat": "16g"},
+    "Carrot Cake": {"cal": 400, "carb": "50g", "prot": "5g", "fat": "22g"},
+    "Ceviche": {"cal": 150, "carb": "8g", "prot": "20g", "fat": "5g"},
+    "Cheese Plate": {"cal": 450, "carb": "5g", "prot": "25g", "fat": "38g"},
+    "Cheesecake": {"cal": 420, "carb": "35g", "prot": "6g", "fat": "30g"},
+    "Chicken Quesadilla": {"cal": 500, "carb": "40g", "prot": "30g", "fat": "28g"},
+    "Chicken Wings": {"cal": 320, "carb": "5g", "prot": "25g", "fat": "22g"},
+    "Chocolate Cake": {"cal": 380, "carb": "50g", "prot": "5g", "fat": "20g"},
+    "Chocolate Mousse": {"cal": 350, "carb": "30g", "prot": "5g", "fat": "25g"},
+    "Churros": {"cal": 300, "carb": "40g", "prot": "4g", "fat": "15g"},
+    "Clam Chowder": {"cal": 200, "carb": "20g", "prot": "8g", "fat": "10g"},
+    "Club Sandwich": {"cal": 550, "carb": "45g", "prot": "30g", "fat": "28g"},
+    "Crab Cakes": {"cal": 280, "carb": "15g", "prot": "20g", "fat": "18g"},
+    "Creme Brulee": {"cal": 380, "carb": "35g", "prot": "5g", "fat": "28g"},
+    "Croque Madame": {"cal": 600, "carb": "40g", "prot": "30g", "fat": "38g"},
+    "Cup Cakes": {"cal": 350, "carb": "45g", "prot": "4g", "fat": "18g"},
+    "Deviled Eggs": {"cal": 150, "carb": "2g", "prot": "12g", "fat": "12g"},
+    "Donuts": {"cal": 320, "carb": "38g", "prot": "4g", "fat": "18g"},
+    "Dumplings": {"cal": 200, "carb": "25g", "prot": "8g", "fat": "8g"},
+    "Edamame": {"cal": 120, "carb": "10g", "prot": "11g", "fat": "5g"},
+    "Eggs Benedict": {"cal": 650, "carb": "35g", "prot": "25g", "fat": "45g"},
+    "Escargots": {"cal": 180, "carb": "5g", "prot": "15g", "fat": "12g"},
+    "Falafel": {"cal": 330, "carb": "40g", "prot": "13g", "fat": "18g"},
+    "Filet Mignon": {"cal": 280, "carb": "0g", "prot": "30g", "fat": "18g"},
+    "Fish And Chips": {"cal": 550, "carb": "50g", "prot": "25g", "fat": "30g"},
+    "Foie Gras": {"cal": 450, "carb": "5g", "prot": "12g", "fat": "42g"},
+    "French Fries": {"cal": 320, "carb": "42g", "prot": "4g", "fat": "15g"},
+    "French Onion Soup": {"cal": 280, "carb": "25g", "prot": "12g", "fat": "15g"},
+    "French Toast": {"cal": 350, "carb": "45g", "prot": "10g", "fat": "15g"},
+    "Fried Calamari": {"cal": 300, "carb": "25g", "prot": "18g", "fat": "15g"},
+    "Fried Rice": {"cal": 350, "carb": "50g", "prot": "10g", "fat": "12g"},
+    "Frozen Yogurt": {"cal": 150, "carb": "25g", "prot": "4g", "fat": "3g"},
+    "Garlic Bread": {"cal": 180, "carb": "25g", "prot": "5g", "fat": "8g"},
+    "Gnocchi": {"cal": 280, "carb": "45g", "prot": "8g", "fat": "8g"},
+    "Greek Salad": {"cal": 220, "carb": "12g", "prot": "8g", "fat": "16g"},
+    "Grilled Cheese Sandwich": {"cal": 400, "carb": "35g", "prot": "15g", "fat": "25g"},
+    "Grilled Salmon": {"cal": 280, "carb": "0g", "prot": "30g", "fat": "18g"},
+    "Guacamole": {"cal": 160, "carb": "9g", "prot": "2g", "fat": "15g"},
+    "Gyoza": {"cal": 220, "carb": "25g", "prot": "10g", "fat": "10g"},
+    "Hamburger": {"cal": 500, "carb": "40g", "prot": "25g", "fat": "28g"},
+    "Hot And Sour Soup": {"cal": 120, "carb": "15g", "prot": "8g", "fat": "5g"},
+    "Hot Dog": {"cal": 350, "carb": "30g", "prot": "12g", "fat": "20g"},
+    "Huevos Rancheros": {"cal": 450, "carb": "40g", "prot": "20g", "fat": "25g"},
+    "Hummus": {"cal": 180, "carb": "15g", "prot": "8g", "fat": "12g"},
+    "Ice Cream": {"cal": 250, "carb": "30g", "prot": "4g", "fat": "15g"},
+    "Lasagna": {"cal": 380, "carb": "35g", "prot": "18g", "fat": "20g"},
+    "Lobster Bisque": {"cal": 280, "carb": "15g", "prot": "12g", "fat": "18g"},
+    "Lobster Roll Sandwich": {"cal": 550, "carb": "45g", "prot": "25g", "fat": "30g"},
+    "Macaroni And Cheese": {"cal": 400, "carb": "50g", "prot": "15g", "fat": "18g"},
+    "Macarons": {"cal": 80, "carb": "10g", "prot": "1g", "fat": "5g"},
+    "Miso Soup": {"cal": 80, "carb": "8g", "prot": "6g", "fat": "3g"},
+    "Mussels": {"cal": 170, "carb": "8g", "prot": "24g", "fat": "5g"},
+    "Nachos": {"cal": 450, "carb": "50g", "prot": "12g", "fat": "25g"},
+    "Omelette": {"cal": 250, "carb": "2g", "prot": "18g", "fat": "20g"},
+    "Onion Rings": {"cal": 400, "carb": "45g", "prot": "5g", "fat": "22g"},
+    "Oysters": {"cal": 80, "carb": "5g", "prot": "9g", "fat": "3g"},
+    "Pad Thai": {"cal": 450, "carb": "60g", "prot": "20g", "fat": "15g"},
+    "Paella": {"cal": 400, "carb": "50g", "prot": "25g", "fat": "15g"},
+    "Panna Cotta": {"cal": 300, "carb": "25g", "prot": "5g", "fat": "20g"},
+    "Peking Duck": {"cal": 450, "carb": "5g", "prot": "30g", "fat": "35g"},
+    "Pho": {"cal": 350, "carb": "45g", "prot": "20g", "fat": "10g"},
+    "Poutine": {"cal": 550, "carb": "50g", "prot": "15g", "fat": "35g"},
+    "Pulled Pork Sandwich": {"cal": 500, "carb": "45g", "prot": "30g", "fat": "25g"},
+    "Ramen": {"cal": 450, "carb": "55g", "prot": "18g", "fat": "18g"},
+    "Ravioli": {"cal": 300, "carb": "35g", "prot": "12g", "fat": "12g"},
+    "Red Velvet Cake": {"cal": 400, "carb": "50g", "prot": "5g", "fat": "22g"},
+    "Risotto": {"cal": 350, "carb": "45g", "prot": "10g", "fat": "15g"},
+    "Sashimi": {"cal": 150, "carb": "2g", "prot": "25g", "fat": "5g"},
+    "Scallops": {"cal": 180, "carb": "5g", "prot": "30g", "fat": "5g"},
+    "Seaweed Salad": {"cal": 100, "carb": "15g", "prot": "3g", "fat": "5g"},
+    "Shrimp And Grits": {"cal": 450, "carb": "40g", "prot": "25g", "fat": "22g"},
+    "Spaghetti Bolognese": {"cal": 450, "carb": "55g", "prot": "20g", "fat": "18g"},
+    "Spaghetti Carbonara": {"cal": 500, "carb": "50g", "prot": "20g", "fat": "28g"},
+    "Spring Rolls": {"cal": 200, "carb": "25g", "prot": "6g", "fat": "10g"},
+    "Steak": {"cal": 300, "carb": "0g", "prot": "30g", "fat": "20g"},
+    "Strawberry Shortcake": {"cal": 350, "carb": "45g", "prot": "5g", "fat": "18g"},
+    "Sushi": {"cal": 200, "carb": "30g", "prot": "10g", "fat": "5g"},
+    "Tacos": {"cal": 350, "carb": "30g", "prot": "15g", "fat": "18g"},
+    "Takoyaki": {"cal": 250, "carb": "30g", "prot": "10g", "fat": "12g"},
+    "Tiramisu": {"cal": 380, "carb": "40g", "prot": "6g", "fat": "22g"},
+    "Tuna Tartare": {"cal": 180, "carb": "5g", "prot": "25g", "fat": "8g"},
+    "Waffles": {"cal": 300, "carb": "40g", "prot": "8g", "fat": "15g"},
     "default": {"cal": 250, "carb": "30g", "prot": "10g", "fat": "10g"}
 }
 
@@ -155,7 +249,7 @@ elif page == "estimate":
             idx = outputs.logits.argmax(-1).item()
             name = food_names[idx]
 
-        st.success(f"*Detected:* {name}")
+        st.success(f"Detected: {name}")
 
         nut = nutrition_db.get(name, nutrition_db["default"])
 
@@ -190,7 +284,7 @@ elif page == "food_library":
         df = pd.DataFrame(st.session_state.history)
         st.dataframe(df, use_container_width=True)
         total_cal = sum([x for x in df["Calories"] if isinstance(x, (int, float))])
-        st.info(f"*Total Calories Logged:* {total_cal} kcal")
+        st.info(f"Total Calories Logged: {total_cal} kcal")
     else:
         st.info("No food logged yet.")
     nav_buttons(prev="estimate", next="health_tips")
@@ -217,22 +311,22 @@ elif page == "health_tips":
 elif page == "about":
     st.markdown('<h1 class="title">About CALIX</h1>', unsafe_allow_html=True)
     st.markdown("""
-    *CALIX* is an AI food detector that identifies *101 foods* from photos.
+    CALIX is an AI food detector that identifies 101 foods from photos.
 
     ### Features
-    - *Detects exact names*: Pizza, Biryani, Appam, Samosa, Idli, Dosa, etc.
-    - *Local nutrition*: Calories, Carbs, Protein, Fat (no internet needed)
-    - *History log*: Saves all scans with full details
-    - *50 Health Tips*
-    - *Dark theme + navigation*
+    - Detects exact names: Pizza, Biryani, Appam, Samosa, Idli, Dosa, etc.
+    - Local nutrition: Calories, Carbs, Protein, Fat (no internet needed)
+    - History log: Saves all scans with full details
+    - 50 Health Tips
+    - Dark theme + navigation
 
     ### AI Model
     - eslamxm/vit-base-food101 (Public, 101 classes from Food-101 dataset)
     - Dataset: 101,000 images, 101 classes
 
-    *Built by:*  
+    Built by:  
     Rudhreshwaran, Shreyas, Tiya Singh, Shubham Prasad, Shubham Raj  
-    *AMC CSE-AIML | 2025*
+    AMC CSE-AIML | 2025
     """)
     nav_buttons(prev="health_tips")
     footer()
