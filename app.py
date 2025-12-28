@@ -325,8 +325,9 @@ elif page == "about":
     - Dataset: 101,000 images, 101 classes
 
     Built by:  
-    Rudhreshwaran, Shreyas, Tiya Singh, Shubham Prasad, Shubham Raj  
+    Rudhreshwaran M
     AMC CSE-AIML | 2025
     """)
     nav_buttons(prev="health_tips")
     footer()
+
